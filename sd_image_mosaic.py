@@ -83,7 +83,10 @@ class SDMosaique:
 
         # Convert the output image to a PIL Image object and save it to disk
         output_image = Image.fromarray(output_image)
-        output_image.save(os.path.join(self.folder_structure.result_path,self.input_image))
+        print(self.folder_structure.result_path)
+        print(self.input_image)
+        print("saving result to {}".format(os.path.join(self.folder_structure.result_path,os.path.basename(self.input_image))))
+        output_image.save(os.path.join(self.folder_structure.result_path,os.path.basename(self.input_image)))
         return output_image
 
     def find_matching_file_by_index(self, path, index):

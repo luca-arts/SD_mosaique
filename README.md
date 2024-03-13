@@ -1,4 +1,4 @@
-# SD_mosaique
+# SD_mosaic
 create an image mosaique based via stable diffusion
 
 
@@ -16,14 +16,14 @@ python -m pip install -r requirements.txt
 ```
 3. run the file once to download the necessary AI models, go get yourself a coffee in the meantime.
 ```bash
-python sd_image_mosaique.py wio.jpg "constructivist style tree leaves . geometric shapes, bold colors, dynamic composition, propaganda art style"
+python sd_image_mosaic.py wio.jpg "constructivist style tree leaves . geometric shapes, bold colors, dynamic composition, propaganda art style"
 ```
 
 ## running directly
 
 ```bash
 venv\Scripts\activate
-python sd_image_mosaique.py <YOUR IMAGE> "<YOUR PROMPT>"
+python sd_image_mosaic.py <YOUR IMAGE> "<YOUR PROMPT>"
 ```
 
 ## running via interface
