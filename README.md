@@ -11,7 +11,7 @@ create an image mosaique based via stable diffusion
 ```bash
 cd <this directory>
 python -m venv .venv
-.venv\Scripts\activate
+venv\Scripts\activate
 python -m pip install -r requirements.txt
 ```
 3. run the file once to download the necessary AI models, go get yourself a coffee in the meantime.
@@ -22,6 +22,6 @@ python sd_image_mosaique.py wio.jpg "constructivist style tree leaves . geometri
 ## running
 
 ```bash
-.venv\Scripts\activate
+venv\Scripts\activate
 python sd_image_mosaique.py <YOUR IMAGE> "<YOUR PROMPT>"
 ```
