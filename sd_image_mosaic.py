@@ -19,7 +19,6 @@ class SDMosaique:
         self.prompt = prompt
         self.model_id_or_path = "runwayml/stable-diffusion-v1-5"
         self.folder_structure = None
-        self.create_folder_structure()
         self.amount_of_rows = amount_of_rows
         self.amount_of_cols = amount_of_cols
         self.cell_resolution = (512, 512)
@@ -201,13 +200,16 @@ class FolderStructure:
 def generate_mosaique(input_image: Path, prompt: str, amount_of_rows: int=15, amount_of_cols:int=15):
     print(input_image, prompt)
     sd_mosaique = SDMosaique(input_image, prompt, amount_of_rows, amount_of_cols)
+    
+    sd_mosaique.create_folder_structure()
+
     sd_mosaique.generate_upscaled_split_images()
 
     sd_mosaique.generate_img2img_folder()
 
     mosaique = sd_mosaique.stitch_images()
 
-    return mosaique
+    return mosaique, sd_mosaique.folder_structure.root_path
 
 
 if __name__ == "__main__":

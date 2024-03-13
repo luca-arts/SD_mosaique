@@ -6,5 +6,5 @@ demo = gr.Interface(fn=generate_mosaique, inputs=[
     "textbox", 
     gr.Slider(1, 30, value=15, label="rows", info="Choose between 1 and 30"),
     gr.Slider(1, 30, value=15, label="cols", info="Choose between 1 and 30")
-    ], outputs="image")
+    ], outputs=["image","textbox"])
 demo.launch()
