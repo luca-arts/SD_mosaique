@@ -23,18 +23,22 @@ class SDMosaique:
         self.amount_of_rows = 15
         self.amount_of_cols = 15
         self.cell_resolution = (512, 512)
+        self.pipe = None
 
     def up_scale_pixels(self, img: Image.Image):
         # todo do we want to have a different upscaling algorithm?
         upscale = img.resize(self.cell_resolution)
         return upscale
 
-    def generate_img(self, prompt: str, base_image: Image.Image, preview: bool = False):
+    def prep_pipeline(self):
         device = "cuda"
-        pipe = StableDiffusionImg2ImgPipeline.from_pretrained(self.model_id_or_path, torch_dtype=torch.float16)
-        pipe.safety_checker = lambda images, clip_input: (images, [False] * len(images))  # allows for NSFW images
-        pipe = pipe.to(device)
-        image = pipe(prompt=prompt, image=base_image, strength=0.75, guidance_scale=7.5, num_inference_steps=50).images[
+        self.pipe = StableDiffusionImg2ImgPipeline.from_pretrained(self.model_id_or_path, torch_dtype=torch.float16)
+        self.pipe.safety_checker = lambda images, clip_input: (images, [False] * len(images))  # allows for NSFW images
+        self.pipe = self.pipe.to(device)
+
+    def generate_img(self, prompt: str, base_image: Image.Image, preview: bool = False):
+        
+        image = self.pipe(prompt=prompt, image=base_image, strength=0.75, guidance_scale=7.5, num_inference_steps=50).images[
             0]
         if preview:
             grid = make_image_grid([base_image, image], rows=1, cols=2)
@@ -73,7 +77,6 @@ class SDMosaique:
                 index = i * self.amount_of_cols + j
 
                 gen_img_pixel = self.find_matching_file_by_index(self.folder_structure.gen_imgs_path, index)
-
                 # Insert the upscaled pixel into the output image
                 output_image[i * self.cell_resolution[0]:(i + 1) * self.cell_resolution[0],
                     j * self.cell_resolution[1]:(j + 1) * self.cell_resolution[1]] = Image.open(gen_img_pixel)
@@ -90,7 +93,7 @@ class SDMosaique:
         for filename in os.listdir(path):
 
             # Check if the current file is an image (based on its file extension)
-            if filename.endswith(".jpg") or filename.endswith(".png"):
+            if filename.endswith(".jpg") or filename.endswith(".png") or filename.endswith(".jpeg"):
                 filename_stem = Path(filename).stem
 
                 # Check if the current filename ends with the target index (as a string)
@@ -122,22 +125,19 @@ class SDMosaique:
         for filename in os.listdir(self.folder_structure.imgs_path):
 
             # Check if the current file is an image (based on its file extension)
-            if filename.endswith(".jpg") or filename.endswith(".png"):
+            if filename.endswith(".jpg") or filename.endswith(".png") or filename.endswith(".jpeg"):
                 # Construct the full path to the image file
                 image_path = os.path.join(os.getcwd(), self.folder_structure.imgs_path, filename)
                 image_save_path = os.path.join(os.getcwd(), self.folder_structure.upscale_imgs_path, filename)
-                print(image_save_path)
-
                 image = Image.open(image_path)
-
                 upscaled_img = self.up_scale_pixels(image)
-
                 upscaled_img.save(image_save_path)
 
     def generate_img2img_folder(self):
+        self.prep_pipeline()
         for filename in os.listdir(self.folder_structure.upscale_imgs_path):
             # Check if the current file is an image (based on its file extension)
-            if filename.endswith(".jpg") or filename.endswith(".png"):
+            if filename.endswith(".jpg") or filename.endswith(".png") or filename.endswith(".jpeg"):
                 print("generating for tile {}".format(filename))
                 # Construct the full path to the image file
                 image_path = os.path.join(os.getcwd(), self.folder_structure.upscale_imgs_path, filename)
@@ -202,7 +202,7 @@ def main(input_image: Path, prompt: str):
 
     sd_mosaique.generate_img2img_folder()
 
-    sd_mosaique.stitch_images("./gen_imgs", 15, 15, Path("result/{}_mosaic.jpg".format(input_image.stem)))
+    sd_mosaique.stitch_images()
 
 
 if __name__ == "__main__":

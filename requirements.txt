@@ -1,10 +1,11 @@
 datetime
 split-image
+--extra-index-url https://download.pytorch.org/whl/cu121
 torch
-yaml
+torchvision
+torchaudio
 diffusers
 pillow
 numpy
-os
-pathlib
-argparse
+transformers
+accelerate
