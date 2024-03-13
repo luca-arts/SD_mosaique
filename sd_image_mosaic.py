@@ -83,7 +83,7 @@ class SDMosaique:
 
         # Convert the output image to a PIL Image object and save it to disk
         output_image = Image.fromarray(output_image)
-        output_image.save(self.folder_structure.result_path)
+        output_image.save(os.path.join(self.folder_structure.result_path,self.input_image))
 
     def find_matching_file_by_index(self, path, index):
         # Initialize an empty string to store the matching filename
@@ -119,7 +119,7 @@ class SDMosaique:
 
         # split the image and save it in ./imgs
         split_image.split_image(self.input_image, self.amount_of_rows, self.amount_of_cols, should_square=False,
-                                should_cleanup=False, output_dir=self.folder_structure.imgs_path)
+                                should_cleanup=False, output_dir=self.folder_structure.imgs_path, should_quiet=True)
 
         # Loop over each file in the folder
         for filename in os.listdir(self.folder_structure.imgs_path):
