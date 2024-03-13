@@ -19,9 +19,16 @@ python -m pip install -r requirements.txt
 python sd_image_mosaique.py wio.jpg "constructivist style tree leaves . geometric shapes, bold colors, dynamic composition, propaganda art style"
 ```
 
-## running
+## running directly
 
 ```bash
 venv\Scripts\activate
 python sd_image_mosaique.py <YOUR IMAGE> "<YOUR PROMPT>"
+```
+
+## running via interface
+
+```bash
+venv\Scripts\activate
+python interface.py
 ```

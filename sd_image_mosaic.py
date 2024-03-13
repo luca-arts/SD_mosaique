@@ -14,14 +14,14 @@ import argparse
 
 
 class SDMosaique:
-    def __init__(self, input_image, prompt):
+    def __init__(self, input_image, prompt, amount_of_rows, amount_of_cols):
         self.input_image = input_image
         self.prompt = prompt
         self.model_id_or_path = "runwayml/stable-diffusion-v1-5"
         self.folder_structure = None
         self.create_folder_structure()
-        self.amount_of_rows = 15
-        self.amount_of_cols = 15
+        self.amount_of_rows = amount_of_rows
+        self.amount_of_cols = amount_of_cols
         self.cell_resolution = (512, 512)
         self.pipe = None
 
@@ -75,8 +75,9 @@ class SDMosaique:
             for j in range(self.amount_of_cols):
                 # Compute the index of the upscaled pixel in the list
                 index = i * self.amount_of_cols + j
-
+                print(index)
                 gen_img_pixel = self.find_matching_file_by_index(self.folder_structure.gen_imgs_path, index)
+                print(gen_img_pixel)
                 # Insert the upscaled pixel into the output image
                 output_image[i * self.cell_resolution[0]:(i + 1) * self.cell_resolution[0],
                     j * self.cell_resolution[1]:(j + 1) * self.cell_resolution[1]] = Image.open(gen_img_pixel)
@@ -84,6 +85,7 @@ class SDMosaique:
         # Convert the output image to a PIL Image object and save it to disk
         output_image = Image.fromarray(output_image)
         output_image.save(os.path.join(self.folder_structure.result_path,self.input_image))
+        return output_image
 
     def find_matching_file_by_index(self, path, index):
         # Initialize an empty string to store the matching filename
@@ -97,7 +99,7 @@ class SDMosaique:
                 filename_stem = Path(filename).stem
 
                 # Check if the current filename ends with the target index (as a string)
-                if filename_stem.endswith(str(index)):
+                if filename_stem.endswith("_{}".format(str(index))):
                     # Update the matching filename
                     matching_filename = filename
 
@@ -196,13 +198,16 @@ class FolderStructure:
             yaml.dump(config.__dict__, f)
 
 
-def main(input_image: Path, prompt: str):
-    sd_mosaique = SDMosaique(input_image, prompt)
+def generate_mosaique(input_image: Path, prompt: str, amount_of_rows: int=15, amount_of_cols:int=15):
+    print(input_image, prompt)
+    sd_mosaique = SDMosaique(input_image, prompt, amount_of_rows, amount_of_cols)
     sd_mosaique.generate_upscaled_split_images()
 
     sd_mosaique.generate_img2img_folder()
 
-    sd_mosaique.stitch_images()
+    mosaique = sd_mosaique.stitch_images()
+
+    return mosaique
 
 
 if __name__ == "__main__":
@@ -220,6 +225,6 @@ if __name__ == "__main__":
     image_path = Path(args.image)
     if image_path.exists():
         # Call the main function with the parsed arguments
-        main(image_path, args.prompt)
+        generate_mosaique(image_path, args.prompt)
     else:
         print("the image is not found")
