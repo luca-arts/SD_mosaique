@@ -122,7 +122,7 @@ class SDMosaique:
         print("input image width = {}, height={}".format(width, height))
 
         # split the image and save it in ./imgs
-        split_image.split_image(self.input_image, self.amount_of_rows, self.amount_of_cols, should_square=False,
+        split_image.split_image(self.input_image, self.amount_of_rows, self.amount_of_cols, should_square=True,
                                 should_cleanup=False, output_dir=self.folder_structure.imgs_path, should_quiet=True)
 
         # Loop over each file in the folder
